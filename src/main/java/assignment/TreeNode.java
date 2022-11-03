@@ -40,6 +40,10 @@ public class TreeNode<K extends Comparable<K>, V> {
         return parent;
     }
 
+    public void setValue(V value) {
+        this.value = value;
+    }
+
     public void setLeft(TreeNode<K, V> left) {
         this.left = left;
     }

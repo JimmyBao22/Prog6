@@ -20,7 +20,17 @@ public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
         }
 
         TreeNode<K, V> current = root;
-        while (current != null && current.getKey() != key) {
+        current = find(key, current);
+
+        if (current != null && current.getKey().equals(key)) {
+            return current.getValue();
+        }
+
+        return null;
+    }
+
+    private TreeNode<K, V> find(K key, TreeNode<K, V> current) {
+        while (current != null && !current.getKey().equals(key)) {
             if (current.getKey().compareTo(key) < 0) {
                 // the current node key is less than the key we are looking for, go into the right subtree
                 current = current.getRight();
@@ -29,12 +39,7 @@ public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
                 current = current.getLeft();
             }
         }
-
-        if (current != null && current.getKey().equals(key)) {
-            return current.getValue();
-        }
-
-        return null;
+        return current;
     }
 
     @Override
@@ -45,11 +50,11 @@ public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
 
         TreeNode<K, V> addedNode = new TreeNode<>(key, value, generatePriority(), null);
 
-        insertNode(key, addedNode);
+        insertNode(key, addedNode, true);
     }
 
     // insert addedNode into the treap
-    private void insertNode(K key, TreeNode<K, V> addedNode) {
+    private void insertNode(K key, TreeNode<K, V> addedNode, boolean replace) {
         if (root == null) {
             root = addedNode;
             return;
@@ -66,6 +71,11 @@ public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
                 } else {
                     current = current.getRight();
                 }
+            } else if (replace && current.getKey().equals(key)) {
+                // replace this node's value with addedNode's value. Don't need to do any more operations because
+                // this node is already in the right place
+                current.setValue(addedNode.getValue());
+                return;
             } else {
                 // the current node key is greater than or equal to the key we are inserting, go into the left subtree
                 if (current.getLeft() == null) {
@@ -138,18 +148,10 @@ public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
         }
 
         TreeNode<K, V> current = root;
-        // find the node with the right key
-        while (current != null && current.getKey() != key) {
-            if (current.getKey().compareTo(key) < 0) {
-                // the current key is less than the actual key, go into the right subtree
-                current = current.getRight();
-            } else {
-                current = current.getLeft();
-            }
-        }
+        current = find(key, current);
 
         // did not find the key in the tree
-        if (current == null || current.getKey() != key) {
+        if (current == null || !current.getKey().equals(key)) {
             return null;
         }
 
@@ -255,7 +257,7 @@ public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
 
         // create the node that is supposed to perform the split
         TreeNode<K, V> splitNode = new TreeNode<>(key, null, MAX_PRIORITY, null);
-        insertNode(key, splitNode);
+        insertNode(key, splitNode, false);
 
         if (splitNode.getLeft() != null) splitNode.getLeft().setParent(null);
         if (splitNode.getRight() != null) splitNode.getRight().setParent(null);
