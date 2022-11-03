@@ -162,7 +162,7 @@ public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
 
     // removes the current node from the treap
     private void removeNode(TreeNode<K, V> current) {
-        // current is the tree with the right key. Keep rotating down until it is a leaf node
+        // Keep rotating down until current is a leaf node
         while (current != null && (current.getLeft() != null || current.getRight() != null)) {
 
             TreeNode<K, V> parent = current.getParent();
@@ -186,6 +186,9 @@ public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
             }
 
             setParent(current.getParent(), parent, leftSide);
+            if (parent == null) {
+                root = current.getParent();
+            }
         }
 
         // now that it's at the bottom of the tree, we can remove it
@@ -196,40 +199,6 @@ public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
                 current.getParent().setRight(null);
             }
         }
-    }
-
-    // TODO delete if not needed
-    // switches the current node with ist child node in the tree (based on if it has the left or right child)
-    private void switchNode(TreeNode<K, V> current, TreeNode<K, V> parent, boolean left, boolean leftSide) {
-        TreeNode<K, V> child;
-        if (left) {
-            child = current.getLeft();
-        } else {
-            child = current.getRight();
-        }
-
-        current.setRight(child.getRight());
-        if (child.getRight() != null) {
-            child.getRight().setParent(current);
-        }
-        current.setLeft(child.getLeft());
-        if (child.getLeft() != null) {
-            child.getLeft().setParent(current);
-        }
-
-        if (left) {
-            child.setLeft(current);
-        } else {
-            child.setRight(current);
-        }
-        current.setParent(child);
-
-        if (leftSide) {
-            parent.setLeft(child);
-        } else {
-            parent.setRight(child);
-        }
-        child.setParent(parent);
     }
 
     // sets the parent's left or right child to current
@@ -278,7 +247,8 @@ public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
         TreeNode<K, V> temporaryRoot = new TreeNode<>(null, null, MAX_PRIORITY, null);
         temporaryRoot.setLeft(root);
         if (root != null) root.setParent(temporaryRoot);
-        if (t instanceof TreapMap<K, V> treapMap) {
+        if (t instanceof TreapMap<K, V>) {
+            TreapMap<K, V>  treapMap = (TreapMap<K, V>) t;
             temporaryRoot.setRight(treapMap.getRoot());
             if (treapMap.getRoot() != null) treapMap.getRoot().setParent(temporaryRoot);
             removeNode(temporaryRoot);
@@ -301,8 +271,10 @@ public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
         // keeps track of the depth of the current TreeNode has been popped from the stack
         Stack<Integer> depth = new Stack<Integer>();
 
-        stack.push(root);
-        depth.push(0);
+        if (root != null) {
+            stack.push(root);
+            depth.push(0);
+        }
 
         StringBuilder stringBuilder = new StringBuilder();
 
@@ -312,7 +284,7 @@ public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
             for (int j = 0; j < d; j++) {
                 stringBuilder.append("\t");
             }
-            stringBuilder.append(current.getPriority() + " <" + current.getKey() + ", " + current.getValue() + ">\n");
+            stringBuilder.append("[" + current.getPriority() + "] <" + current.getKey() + ", " + current.getValue() + ">\n");
             if (current.getRight() != null) {
                 stack.push(current.getRight());
                 depth.push(d + 1);
@@ -323,25 +295,6 @@ public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
             }
         }
         return stringBuilder.toString();
-    }
-
-    @Override
-    public void meld(Treap<K, V> t) throws UnsupportedOperationException {
-
-    }
-
-    @Override
-    public void difference(Treap<K, V> t) throws UnsupportedOperationException {
-
-    }
-
-    @Override
-    public double balanceFactor() throws UnsupportedOperationException {
-        return 0;
-    }
-
-    private int generatePriority() {
-        return (int)(Math.random() * MAX_PRIORITY);
     }
 
     private class TreapMapIterator implements Iterator<K> {
@@ -389,5 +342,24 @@ public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
             }
             return null;
         }
+    }
+
+    @Override
+    public void meld(Treap<K, V> t) throws UnsupportedOperationException {
+
+    }
+
+    @Override
+    public void difference(Treap<K, V> t) throws UnsupportedOperationException {
+
+    }
+
+    @Override
+    public double balanceFactor() throws UnsupportedOperationException {
+        return 0;
+    }
+
+    private int generatePriority() {
+        return (int)(Math.random() * MAX_PRIORITY);
     }
 }
