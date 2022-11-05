@@ -12,7 +12,8 @@ public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
     private TreapMap(TreeNode<K, V> root) {
         this.root = root;
     }
-    
+
+    // Retrieves the value associated with a key in this treap
     @Override
     public V lookup(K key) {
         if (key == null) {
@@ -29,6 +30,7 @@ public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
         return null;
     }
 
+    // finds the node with this key in the treap
     private TreeNode<K, V> find(K key, TreeNode<K, V> current) {
         while (current != null && !current.getKey().equals(key)) {
             if (current.getKey().compareTo(key) < 0) {
@@ -42,6 +44,7 @@ public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
         return current;
     }
 
+    // Adds a key-value pair to this treap
     @Override
     public void insert(K key, V value) {
         if (key == null || value == null) {
@@ -141,6 +144,8 @@ public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
         current.setParent(leftChild);
         leftChild.setParent(parent);
     }
+
+    // Removes key from this treap
     @Override
     public V remove(K key) {
         if (key == null) {
@@ -170,17 +175,13 @@ public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
             boolean leftSide = checkLeftSide(current, parent);
 
             if (current.getLeft() == null) {
-                // rotate left around the current node
                 rotateLeft(current, parent);
             } else if (current.getRight() == null) {
-                // rotate right around the current node
                 rotateRight(current, parent);
             } else {
                 if (current.getLeft().getPriority() > current.getRight().getPriority()) {
-                    // rotate right around the current node
                     rotateRight(current, parent);
                 } else {
-                    // rotate left around the current node
                     rotateLeft(current, parent);
                 }
             }
@@ -218,6 +219,7 @@ public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
         return parent != null && parent.getLeft() != null && parent.getLeft().equals(current);
     }
 
+    // Splits this treap into two treaps
     @Override
     public Treap<K, V>[] split(K key) {
         if (key == null) {
@@ -238,17 +240,18 @@ public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
         return answer;
     }
 
+    // Joins this treap with another treap
     @Override
     public void join(Treap<K, V> t) {
         if (t == null) {
             return;
         }
 
+        // create a temporary root and remove it later
         TreeNode<K, V> temporaryRoot = new TreeNode<>(null, null, MAX_PRIORITY, null);
         temporaryRoot.setLeft(root);
         if (root != null) root.setParent(temporaryRoot);
-        if (t instanceof TreapMap<K, V>) {
-            TreapMap<K, V>  treapMap = (TreapMap<K, V>) t;
+        if (t instanceof TreapMap<K, V> treapMap) {
             temporaryRoot.setRight(treapMap.getRoot());
             if (treapMap.getRoot() != null) treapMap.getRoot().setParent(temporaryRoot);
             removeNode(temporaryRoot);
@@ -259,11 +262,13 @@ public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
         return root;
     }
 
+    // returns an iterator that iterates over the keys in sorted order
     @Override
     public Iterator<K> iterator() {
         return new TreapMapIterator(root);
     }
 
+    // Build a human-readable version of the treap
     @Override
     public String toString() {
         Stack<TreeNode<K, V>> stack = new Stack<TreeNode<K, V>>();
@@ -297,6 +302,7 @@ public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
         return stringBuilder.toString();
     }
 
+    // class for iterator
     private class TreapMapIterator implements Iterator<K> {
 
         Stack<TreeNode<K, V>> stack;
@@ -321,22 +327,26 @@ public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
         @Override
         public K next() {
             while (!stack.isEmpty()) {
+                // in-order traversal
                 TreeNode<K, V> current = stack.pop();
                 int count = popCount.pop();
                 count++;
                 if (count == 1) {
-                    // push the left child into the stack
                     stack.push(current);
                     popCount.push(count);
+                    // push the left child into the stack
                     if (current.getLeft() != null) {
                         stack.push(current.getLeft());
                         popCount.push(0);
                     }
                 } else {
+                    // push the right child into the stack
                     if (current.getRight() != null) {
                         stack.push(current.getRight());
                         popCount.push(0);
                     }
+
+                    // current is the next key in the sequence
                     return current.getKey();
                 }
             }

@@ -40,14 +40,16 @@ public class TestTreapMethods {
         }
 
         for (Integer key : map.keySet()) {
-            Assertions.assertEquals(map.get(key), treap.lookup(key));
+            Assertions.assertEquals(map.get(key), treap.lookup(key),
+                    "key value pair of " + key + " " + map.get(key) + " is not in the treap");
         }
 
         for (int i = -MAX; i <= MAX; i++) {
             if (!map.containsKey(i)) {
-                Assertions.assertEquals(null, treap.lookup(i));
+                Assertions.assertEquals(null, treap.lookup(i), "treap contains invalid key of " + i);
             } else {
-                Assertions.assertEquals(map.get(i), treap.lookup(i));
+                Assertions.assertEquals(map.get(i), treap.lookup(i),
+                        "key value pair of " + i + " " + map.get(i) + " is not in the treap");
             }
         }
 
@@ -79,14 +81,16 @@ public class TestTreapMethods {
         }
 
         for (Integer key : map.keySet()) {
-            Assertions.assertEquals(map.get(key), treap.lookup(key));
+            Assertions.assertEquals(map.get(key), treap.lookup(key),
+                    "key value pair of " + key + " " + map.get(key) + " is not in the treap");
         }
 
         for (int i = -MAX; i <= MAX; i++) {
             if (!map.containsKey(i)) {
-                Assertions.assertEquals(null, treap.lookup(i));
+                Assertions.assertEquals(null, treap.lookup(i), "treap contains invalid key of " + i);
             } else {
-                Assertions.assertEquals(map.get(i), treap.lookup(i));
+                Assertions.assertEquals(map.get(i), treap.lookup(i),
+                        "key value pair of " + i + " " + map.get(i) + " is not in the treap");
             }
         }
 
@@ -126,18 +130,22 @@ public class TestTreapMethods {
 
         for (i = 0; i < arr.length; i++) {
             if (arr[i][0] < splitVal) {
-                Assertions.assertEquals(arr[i][1], ret[0].lookup(arr[i][0]));
-                Assertions.assertTrue(ret[1].lookup(arr[i][0]) == null);
+                Assertions.assertEquals(arr[i][1], ret[0].lookup(arr[i][0]),
+                        "key value pair of " + arr[i][0] + " " + arr[i][1] + " is not in the first subtree treap");
+                Assertions.assertEquals(null, ret[1].lookup(arr[i][0]),
+                        "second subtreap contains invalid key of " + arr[i][0]);
             } else {
-                Assertions.assertTrue(ret[0].lookup(arr[i][0]) == null);
-                Assertions.assertEquals(arr[i][1], ret[1].lookup(arr[i][0]));
+                Assertions.assertEquals(null, ret[0].lookup(arr[i][0]),
+                        "first subtreap contains invalid key of " + arr[i][0]);
+                Assertions.assertEquals(arr[i][1], ret[1].lookup(arr[i][0]),
+                        "key value pair of " + arr[i][1] + " " + arr[i][0] + " is not in the second subtree treap");
             }
         }
 
         for (i = -MAX; i <= MAX; i++) {
             if (!map.containsKey(i)) {
-                Assertions.assertEquals(null, ret[0].lookup(i));
-                Assertions.assertEquals(null, ret[1].lookup(i));
+                Assertions.assertEquals(null, ret[0].lookup(i), "first subtreap contains invalid key of " + i);
+                Assertions.assertEquals(null, ret[1].lookup(i), "second subtreap contains invalid key of " + i);
             }
         }
     }
@@ -176,14 +184,16 @@ public class TestTreapMethods {
 //        System.out.println(treapOne.toString());
 
         for (Integer key : treapOne) {
-            Assertions.assertEquals(map.get(key), treapOne.lookup(key));
+            Assertions.assertEquals(map.get(key), treapOne.lookup(key),
+                    "key value pair of " + key + " " + map.get(key) + " is not in the treap");
         }
 
         for (int i = -MAX; i <= MAX; i++) {
             if (!map.containsKey(i)) {
-                Assertions.assertEquals(null, treapOne.lookup(i));
+                Assertions.assertEquals(null, treapOne.lookup(i), "treap contains invalid key of " + i);
             } else {
-                Assertions.assertEquals(map.get(i), treapOne.lookup(i));
+                Assertions.assertEquals(map.get(i), treapOne.lookup(i),
+                        "key value pair of " + i + " " + map.get(i) + " is not in the treap");
             }
         }
     }
@@ -211,18 +221,13 @@ public class TestTreapMethods {
         }
         Arrays.sort(arr);
 
-//        i = 0;
-//        for (Integer key : treap) {
-//            Assertions.assertEquals(arr[i++], key);
-//        }
-//        Assertions.assertEquals(i, arr.length);
-
         i = 0;
         Iterator<Integer> it = treap.iterator();
         while (it.hasNext()) {
-            Assertions.assertEquals(arr[i++], it.next());
+            Assertions.assertEquals(arr[i++], it.next(),
+                    "treap iterator does not contain " + arr[i-1] + " in the right position");
         }
-        Assertions.assertEquals(i, arr.length);
+        Assertions.assertEquals(i, arr.length, "treap iterator does not have right length");
     }
 
     @RepeatedTest(1000)
@@ -248,7 +253,7 @@ public class TestTreapMethods {
         testStringRepresentation(tree, map);
     }
 
-    private void testStringRepresentation(String tree, HashMap<Integer, Integer> map) {
+    public static void testStringRepresentation(String tree, HashMap<Integer, Integer> map) {
         String[] treeLines = tree.split("\n");
         int n = treeLines.length;
         CurNode[] treeNodes = new CurNode[n];
@@ -293,24 +298,29 @@ public class TestTreapMethods {
         while (!stack.isEmpty()) {
             Node cur = stack.pop();
             count++;
-            Assertions.assertEquals(map.get(cur.getCurNode().getKey()), cur.getCurNode().getValue());
+            Assertions.assertEquals(map.get(cur.getCurNode().getKey()), cur.getCurNode().getValue(),
+                    "key value pair of " + cur.getCurNode().getKey() + " " +
+                            map.get(cur.getCurNode().getKey()) + " is not in the treap");
 
             Node parent = cur.getParent();
             if (parent != null) {
-                Assertions.assertTrue(parent.getCurNode().getPriority() >= cur.getCurNode().getPriority());
+                Assertions.assertTrue(parent.getCurNode().getPriority() >= cur.getCurNode().getPriority(),
+                        "priority of a parent node is greater than priority of a child node");
             }
 
             if (cur.getLeft() != null) {
-                Assertions.assertTrue(cur.getLeft().getCurNode().getKey() < cur.getCurNode().getKey());
+                Assertions.assertTrue(cur.getLeft().getCurNode().getKey() < cur.getCurNode().getKey(),
+                        "key of a left child is not less than the key of its parent");
                 stack.push(cur.getLeft());
             }
             if (cur.getRight() != null) {
-                Assertions.assertTrue(cur.getRight().getCurNode().getKey() > cur.getCurNode().getKey());
+                Assertions.assertTrue(cur.getRight().getCurNode().getKey() > cur.getCurNode().getKey(),
+                        "the key of a right child is not greater than the key of its parent");
                 stack.push(cur.getRight());
             }
         }
 
-        Assertions.assertEquals(map.size(), count);
+        Assertions.assertEquals(map.size(), count, "incorrect number of elements in treap");
 
         //        System.out.println();
 //        Stack<Node> stack = new Stack<Node>();
@@ -337,7 +347,7 @@ public class TestTreapMethods {
 //        System.out.println(stringBuilder.toString());
     }
 
-    private class Node {
+    private static class Node {
         private CurNode curNode;
         private Node left, right, parent;
         public Node (CurNode curNode) {
@@ -366,7 +376,7 @@ public class TestTreapMethods {
         }
     }
 
-    private class CurNode {
+    private static class CurNode {
         private int numTabs, priority, key, value;
 
         public CurNode(int numTabs, int priority, int key, int value) {
