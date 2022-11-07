@@ -1,16 +1,21 @@
 package assignment;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.Stack;
 
 public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
 
     private TreeNode<K, V> root;
+    private int numChanges;
 
-    public TreapMap() {}
+    public TreapMap() {
+        this.numChanges = 0;
+    }
 
     private TreapMap(TreeNode<K, V> root) {
         this.root = root;
+        this.numChanges = 0;
     }
 
     // Retrieves the value associated with a key in this treap
@@ -54,6 +59,8 @@ public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
         TreeNode<K, V> addedNode = new TreeNode<>(key, value, generatePriority(), null);
 
         insertNode(key, addedNode, true);
+
+        numChanges++;
     }
 
     // insert addedNode into the treap
@@ -162,6 +169,8 @@ public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
 
         removeNode(current);
 
+        numChanges++;
+
         return current.getValue();
     }
 
@@ -237,6 +246,8 @@ public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
         answer[0] = new TreapMap<>(splitNode.getLeft());
         answer[1] = new TreapMap<>(splitNode.getRight());
 
+        numChanges++;
+
         return answer;
     }
 
@@ -255,6 +266,7 @@ public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
             temporaryRoot.setRight(treapMap.getRoot());
             if (treapMap.getRoot() != null) treapMap.getRoot().setParent(temporaryRoot);
             removeNode(temporaryRoot);
+            numChanges++;
         }
     }
 
@@ -262,10 +274,14 @@ public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
         return root;
     }
 
+    public int getNumChanges() {
+        return numChanges;
+    }
+
     // returns an iterator that iterates over the keys in sorted order
     @Override
     public Iterator<K> iterator() {
-        return new TreapMapIterator(root);
+        return new TreapMapIterator(root, numChanges);
     }
 
     // Build a human-readable version of the treap
@@ -305,18 +321,21 @@ public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
     // class for iterator
     private class TreapMapIterator implements Iterator<K> {
 
-        Stack<TreeNode<K, V>> stack;
-
+        private Stack<TreeNode<K, V>> stack;
+        private TreeNode<K, V> root;
         // keeps track of the number of times the current TreeNode has been popped from the stack
-        Stack<Integer> popCount;
+        private Stack<Integer> popCount;
+        private int numChanges;
 
-        public TreapMapIterator(TreeNode<K, V> root) {
+        public TreapMapIterator(TreeNode<K, V> root, int numChanges) {
             stack = new Stack<TreeNode<K, V>>();
             popCount = new Stack<Integer>();
             if (root != null) {
                 stack.push(root);
                 popCount.push(0);
             }
+            this.root = root;
+            this.numChanges = numChanges;
         }
 
         @Override
@@ -326,6 +345,9 @@ public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
 
         @Override
         public K next() {
+            if (TreapMap.this.getNumChanges() != numChanges) {
+                throw new ConcurrentModificationException("Treap cannot be modified while iterating");
+            }
             while (!stack.isEmpty()) {
                 // in-order traversal
                 TreeNode<K, V> current = stack.pop();

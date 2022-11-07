@@ -11,10 +11,22 @@ public class TestEdgeCases {
 
     @Test
     void testSplitOne() {
-        Treap<Integer, Integer> treap = new TreapMap<Integer, Integer>();
+        TreapMap<Integer, Integer> treap = new TreapMap<Integer, Integer>();
         treap.insert(1, 1);
         Treap<Integer, Integer>[] ret = treap.split(1);
         Assertions.assertTrue(ret[0] != null, "first subtreap should not be null");
+        Assertions.assertTrue(ret[1] != null, "second subtreap should not be null");
+        System.out.println(ret[0].toString());
+        System.out.println();
+        System.out.println(ret[1].toString());
+    }
+
+    @Test
+    void testSplitZero() {
+        TreapMap<Integer, Integer> treap = new TreapMap<Integer, Integer>();
+        Treap<Integer, Integer>[] ret = treap.split(1);
+        Assertions.assertTrue(ret[0] != null, "first subtreap should not be null");
+        Assertions.assertTrue(ret[1] != null, "second subtreap should not be null");
         System.out.println(ret[0].toString());
         System.out.println();
         System.out.println(ret[1].toString());
@@ -74,5 +86,4 @@ public class TestEdgeCases {
         Assertions.assertEquals(null, treap.split(null),
                 "did not return null in split when entering null key");
     }
-
 }
