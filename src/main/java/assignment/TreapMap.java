@@ -378,17 +378,17 @@ public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
 
     @Override
     public void meld(Treap<K, V> t) throws UnsupportedOperationException {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void difference(Treap<K, V> t) throws UnsupportedOperationException {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public double balanceFactor() throws UnsupportedOperationException {
-        return 0;
+        throw new UnsupportedOperationException();
     }
 
     private int generatePriority() {

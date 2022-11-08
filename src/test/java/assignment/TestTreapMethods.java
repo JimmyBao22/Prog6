@@ -254,6 +254,7 @@ public class TestTreapMethods {
     }
 
     public static void testStringRepresentation(String tree, HashMap<Integer, Integer> map) {
+        if (tree.equals("")) return;
         String[] treeLines = tree.split("\n");
         int n = treeLines.length;
         CurNode[] treeNodes = new CurNode[n];
@@ -322,7 +323,7 @@ public class TestTreapMethods {
 
         Assertions.assertEquals(map.size(), count, "incorrect number of elements in treap");
 
-        //        System.out.println();
+//        System.out.println();
 //        Stack<Node> stack = new Stack<Node>();
 //        Stack<Integer> dep = new Stack<Integer>();
 //        stack.push(root);
