@@ -2,6 +2,7 @@ package assignment;
 
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Stack;
 
 public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
@@ -202,7 +203,7 @@ public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
         }
 
         // now that it's at the bottom of the tree, we can remove it
-        if (current != null) {
+        if (current != null && current.getParent() != null) {
             if (checkLeftSide(current, current.getParent())) {
                 current.getParent().setLeft(null);
             } else {
@@ -372,7 +373,8 @@ public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
                     return current.getKey();
                 }
             }
-            return null;
+
+            throw new NoSuchElementException("No elements remaining in iterator");
         }
     }
 
