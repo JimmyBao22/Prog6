@@ -228,6 +228,10 @@ public class TestTreapMethods {
                     "treap iterator does not contain " + arr[i-1] + " in the right position");
         }
         Assertions.assertEquals(i, arr.length, "treap iterator does not have right length");
+
+        Assertions.assertThrows(NoSuchElementException.class, () -> {
+            it.next();
+        }, "Iterator should throw no such element exception when trying to iterate after finishing");
     }
 
     @RepeatedTest(1000)

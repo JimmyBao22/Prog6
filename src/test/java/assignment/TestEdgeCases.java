@@ -4,9 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.*;
 
 public class TestEdgeCases {
 
@@ -15,8 +13,7 @@ public class TestEdgeCases {
         TreapMap<Integer, Integer> treap = new TreapMap<Integer, Integer>();
         treap.insert(1, 1);
         treap.insert(2, 2);
-        treap.insert(2, 2);
-        treap.insert(2, 2);
+        treap.remove(2);
         treap.remove(1);
     }
 
@@ -134,7 +131,7 @@ public class TestEdgeCases {
         TestTreapMethods.testStringRepresentation(ret[1].toString(), secondMap);
     }
 
-    @Test
+    @RepeatedTest(100)
     void testRemoveRoot() {
         TreapMap<Integer, Integer> treap = new TreapMap<Integer, Integer>();
         HashMap<Integer, Integer> map = new HashMap<>();
@@ -179,6 +176,7 @@ public class TestEdgeCases {
         treap.insert(null, null);
         treap.insert(null, 3);
         treap.insert(4, null);
+        System.out.println(treap.toString());
         Iterator<Integer> it = treap.iterator();
         while (it.hasNext()) {
             Integer key = it.next();
@@ -189,8 +187,9 @@ public class TestEdgeCases {
                 "did not return null in remove when entering invalid key");
         Assertions.assertEquals(null, treap.remove(null),
                 "did not return null in remove when entering null key");
-        Assertions.assertEquals(null, treap.split(null),
-                "did not return null in split when entering null key");
+//        Assertions.assertEquals(null, treap.split(null),
+//                "did not return null in split when entering null key");
+         Assertions.assertDoesNotThrow(() -> treap.split(null), "split null throws an error");
     }
 
     @Test
@@ -199,9 +198,15 @@ public class TestEdgeCases {
         treap.insert(1, 1);
         treap.insert(0, 0);
         treap.insert(2, 2);
-        for (Integer key : treap) {
-            // treap.insert(3, 3);
-            treap.remove(1);
-        }
+        Assertions.assertThrows(ConcurrentModificationException.class, () -> {
+            for (Integer key : treap) {
+                treap.insert(3, 3);
+            }
+        }, "Iterator should throw concurrent modification exception when trying to modify while iterating");
+        Assertions.assertThrows(ConcurrentModificationException.class, () -> {
+            for (Integer key : treap) {
+                treap.remove(1);
+            }
+        }, "Iterator should throw concurrent modification exception when trying to modify while iterating");
     }
 }
