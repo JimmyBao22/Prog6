@@ -9,15 +9,6 @@ import java.util.*;
 public class TestEdgeCases {
 
     @Test
-    void test() {
-        TreapMap<Integer, Integer> treap = new TreapMap<Integer, Integer>();
-        treap.insert(1, 1);
-        treap.insert(2, 2);
-        treap.remove(2);
-        treap.remove(1);
-    }
-
-    @Test
     void testSplitOne() {
         TreapMap<Integer, Integer> treap = new TreapMap<Integer, Integer>();
         treap.insert(1, 1);

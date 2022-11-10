@@ -300,6 +300,7 @@ public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
 
         StringBuilder stringBuilder = new StringBuilder();
 
+        // pre-order traversal
         while (!stack.isEmpty()) {
             TreeNode<K, V> current = stack.pop();
             int d = depth.pop();
