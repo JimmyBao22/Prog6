@@ -8,6 +8,127 @@ import java.util.*;
 
 public class TestEdgeCases {
 
+    public static void main(String[] args) {
+
+    }
+
+    @Test
+    void testSplitGeneric() {
+        TreapMap<Integer, Integer> treap = new TreapMap<Integer, Integer>();
+        treap.insert(1, 1);
+        treap.insert(2, 2);
+        TreapMap<Integer, Integer>[] ret = (TreapMap<Integer, Integer>[]) treap.split(1);
+        System.out.println(ret[0].toString());
+        System.out.println(ret[1].toString());
+        System.out.println(ret[0].getRoot());
+        System.out.println(ret[1].getRoot());
+    }
+
+    @Test
+    void testRemoveGreatest() {
+        TreapMap<Integer, Integer> treap = new TreapMap<Integer, Integer>();
+        treap.insert(1, 1);
+        treap.insert(2, 2);
+        treap.insert(3, 3);
+        treap.insert(4, 4);
+        treap.insert(5, 5);
+
+        Treap<Integer, Integer>[]ret = treap.split(5);
+        System.out.println(ret[0].toString());
+        System.out.println(((TreapMap)ret[0]).getRoot());
+        System.out.println();
+        System.out.println(ret[1].toString());
+        System.out.println(((TreapMap)ret[1]).getRoot());
+    }
+
+    @Test
+    void testRemoveLeast() {
+        TreapMap<Integer, Integer> treap = new TreapMap<Integer, Integer>();
+        treap.insert(1, 1);
+        treap.insert(2, 2);
+        treap.insert(3, 3);
+        treap.insert(4, 4);
+        treap.insert(5, 5);
+
+        Treap<Integer, Integer>[] ret = treap.split(1);
+        System.out.println(ret[0].toString());
+        System.out.println(((TreapMap)ret[0]).getRoot());
+        System.out.println();
+        System.out.println(ret[1].toString());
+        System.out.println(((TreapMap)ret[1]).getRoot());
+    }
+
+    @Test
+    void testJoinEmpty() {
+        TreapMap<Integer, Integer> treap = new TreapMap<Integer, Integer>();
+        treap.insert(1, 1);
+        treap.insert(2, 2);
+        treap.insert(3, 3);
+        treap.insert(4, 4);
+        treap.insert(5, 5);
+
+        String before = treap.toString();
+        System.out.println(before);
+
+        TreapMap<Integer, Integer> treap2 = new TreapMap<Integer, Integer>();
+
+        treap.join(treap2);
+
+        String after = treap.toString();
+        System.out.println(after);
+        Assertions.assertEquals(before, after, "joining with an empty treap causes treap to change.");
+    }
+
+    @Test
+    void testJoinEmpty2() {
+        TreapMap<Integer, Integer> treap = new TreapMap<Integer, Integer>();
+        treap.insert(1, 1);
+        treap.insert(2, 2);
+        treap.insert(3, 3);
+        treap.insert(4, 4);
+        treap.insert(5, 5);
+
+        String before = treap.toString();
+        System.out.println(before);
+
+        TreapMap<Integer, Integer> treap2 = new TreapMap<Integer, Integer>();
+
+        treap2.join(treap);
+
+        String after = treap2.toString();
+        System.out.println(after);
+        Assertions.assertEquals(before, after, "joining with an empty treap causes treap to change.");
+        Assertions.assertEquals("", treap.toString(), "first treap should get destroyed.");
+    }
+
+    @Test
+    void testJoinEmpty3() {
+        TreapMap<Integer, Integer> treap = new TreapMap<Integer, Integer>();
+        TreapMap<Integer, Integer> treap2 = new TreapMap<Integer, Integer>();
+        treap.join(treap2);
+        treap2.join(treap);
+    }
+
+    @Test
+    void testInsertDuplicate() {
+        TreapMap<Integer, Integer> treap = new TreapMap<Integer, Integer>();
+        treap.insert(1, 1);
+        treap.insert(2, 2);
+        treap.insert(3, 3);
+        treap.insert(1, 100);
+        System.out.println(treap.toString());
+    }
+
+    @Test
+    void testIterateEmpty() {
+        TreapMap<Integer, Integer> treap = new TreapMap<Integer, Integer>();
+        Iterator<Integer> it = treap.iterator();
+        Assertions.assertEquals(false, it.hasNext(), "iterator has elements albeit treap is empty");
+        Assertions.assertThrows(NoSuchElementException.class, () -> {
+            it.next();
+        }, "Iterator should throw no such element exception when trying to call next");
+    }
+
     @Test
     void testSplitOne() {
         TreapMap<Integer, Integer> treap = new TreapMap<Integer, Integer>();
@@ -199,5 +320,75 @@ public class TestEdgeCases {
                 treap.remove(1);
             }
         }, "Iterator should throw concurrent modification exception when trying to modify while iterating");
+    }
+
+    @Test
+    void testRandomGenerics() {
+        Treap<Integer, Integer> treap0 = new TreapMap<>();
+        treap0.insert(1, 2);
+        Assertions.assertEquals(2, treap0.lookup(1),
+                "key value pair of " + "hello" + " " + "bye" + " is not in the treap");
+        Assertions.assertEquals(null, treap0.lookup(3),
+                "did not return null in lookup when entering invalid key");
+        treap0.remove(1);
+        Assertions.assertEquals(null, treap0.lookup(1),
+                "did not return null in lookup when entering invalid key");
+
+        Treap<String, String> treap = new TreapMap<>();
+        treap.insert("hello", "bye");
+        Assertions.assertEquals("bye", treap.lookup("hello"),
+                "key value pair of " + "hello" + " " + "bye" + " is not in the treap");
+        Assertions.assertEquals(null, treap.lookup("hell"),
+                "did not return null in lookup when entering invalid key");
+        treap.remove("hello");
+        Assertions.assertEquals(null, treap.lookup("hello"),
+                "did not return null in lookup when entering invalid key");
+
+        Treap<Character, Character> treap2 = new TreapMap<>();
+        treap2.insert('a', '?');
+        Assertions.assertEquals('?', treap2.lookup('a'),
+                "key value pair of " + 'a' + " " + '?' + " is not in the treap");
+        Assertions.assertEquals(null, treap2.lookup('b'),
+                "did not return null in lookup when entering invalid key");
+        treap2.remove('a');
+        Assertions.assertEquals(null, treap2.lookup('a'),
+                "did not return null in lookup when entering invalid key");
+
+        Treap<Custom, Integer> treap3 = new TreapMap<>();
+        treap3.insert(new Custom(1, 2), 3);
+        Assertions.assertEquals(3, treap3.lookup(new Custom(1, 2)),
+                "key value pair is not in the treap");
+        Assertions.assertEquals(null, treap3.lookup(new Custom(0, 2)),
+                "did not return null in lookup when entering invalid key");
+        treap3.remove(new Custom(1, 2));
+        Assertions.assertEquals(null, treap3.lookup(new Custom(1, 2)),
+                "did not return null in lookup when entering invalid key");
+    }
+
+    class Custom implements Comparable<Custom> {
+        int a, b;
+        Custom (int a, int b) {
+            this.a = a;
+            this.b = b;
+        }
+
+        public int getA() {
+            return a;
+        }
+
+        public int getB() {
+            return b;
+        }
+
+        public boolean equals(Object other) {
+            if (other instanceof Custom) {
+                return a == ((Custom) other).getA() && b == ((Custom) other).getB();
+            }
+            return false;
+        }
+
+        public int compareTo(Custom other) {
+            return 0;
+        }
     }
 }

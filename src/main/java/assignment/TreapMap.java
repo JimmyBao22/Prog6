@@ -142,7 +142,7 @@ public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
     }
 
     // rotate right around the current node
-    public void rotateRight(TreeNode<K, V> current, TreeNode<K, V> parent) {
+    private void rotateRight(TreeNode<K, V> current, TreeNode<K, V> parent) {
         TreeNode<K, V> leftChild = current.getLeft();
         current.setLeft(leftChild.getRight());
         if (leftChild.getRight() != null) {
@@ -210,6 +210,10 @@ public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
                 current.getParent().setRight(null);
             }
         }
+
+        if (current != null && current.getParent() == null && current.getLeft() == null && current.getRight() == null) {
+            root = null;
+        }
     }
 
     // sets the parent's left or right child to current
@@ -243,7 +247,7 @@ public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
         if (splitNode.getLeft() != null) splitNode.getLeft().setParent(null);
         if (splitNode.getRight() != null) splitNode.getRight().setParent(null);
 
-        Treap<K, V>[] answer = new Treap[2];
+        Treap<K, V>[] answer = new TreapMap[2];
         answer[0] = new TreapMap<>(splitNode.getLeft());
         answer[1] = new TreapMap<>(splitNode.getRight());
 
@@ -267,12 +271,17 @@ public class TreapMap<K extends Comparable<K>, V> implements Treap<K, V> {
             temporaryRoot.setRight(treapMap.getRoot());
             if (treapMap.getRoot() != null) treapMap.getRoot().setParent(temporaryRoot);
             removeNode(temporaryRoot);
+            treapMap.setRoot(null);
             numChanges++;
         }
     }
 
     public TreeNode<K, V> getRoot() {
         return root;
+    }
+
+    public void setRoot(TreeNode<K, V> root) {
+        this.root = root;
     }
 
     public int getNumChanges() {

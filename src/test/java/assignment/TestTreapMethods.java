@@ -7,23 +7,6 @@ import java.util.*;
 
 public class TestTreapMethods {
 
-    public static void main(String[] args) {
-        Treap<Integer, Integer> treap = new TreapMap<Integer, Integer>();
-        treap.insert(6, 6);
-        treap.insert(3, 3);
-        treap.insert(1, 1);
-        treap.insert(5, 5);
-        treap.insert(8, 8);
-        treap.insert(9, 9);
-        treap.insert(4, 4);
-        System.out.println(treap.toString());
-        System.out.println();
-        System.out.println(treap.remove(5));
-        System.out.println();
-        System.out.println(treap.toString());
-        System.out.println(treap.lookup(3));
-    }
-
     @RepeatedTest(1000)
     void testInsertLookup() {
         Treap<Integer, Integer> treap = new TreapMap<Integer, Integer>();
@@ -352,37 +335,52 @@ public class TestTreapMethods {
 //        System.out.println(stringBuilder.toString());
     }
 
-    private static class Node {
+    public static class Node {
         private CurNode curNode;
+
         private Node left, right, parent;
+
         public Node (CurNode curNode) {
             this.curNode = curNode;
         }
+
         public CurNode getCurNode() {
             return curNode;
         }
+
         public Node getLeft() {
             return left;
         }
+
         public Node getRight() {
             return right;
         }
+
         public Node getParent() {
             return parent;
         }
+
         public void setLeft(Node left) {
             this.left = left;
         }
+
         public void setRight(Node right) {
             this.right = right;
         }
+
         public void setParent(Node parent) {
             this.parent = parent;
         }
     }
 
-    private static class CurNode {
+    public static class CurNode {
         private int numTabs, priority, key, value;
+
+        public CurNode(int priority, int key, int value) {
+            this.priority = priority;
+            this.key = key;
+            this.value = value;
+        }
 
         public CurNode(int numTabs, int priority, int key, int value) {
             this.numTabs = numTabs;
@@ -390,15 +388,19 @@ public class TestTreapMethods {
             this.key = key;
             this.value = value;
         }
+
         public int getNumTabs() {
             return numTabs;
         }
+
         public int getPriority() {
             return priority;
         }
+
         public int getKey() {
             return key;
         }
+
         public int getValue() {
             return value;
         }
