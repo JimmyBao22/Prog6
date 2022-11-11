@@ -8,10 +8,6 @@ import java.util.*;
 
 public class TestEdgeCases {
 
-    public static void main(String[] args) {
-
-    }
-
     @Test
     void testSplitGeneric() {
         TreapMap<Integer, Integer> treap = new TreapMap<Integer, Integer>();
